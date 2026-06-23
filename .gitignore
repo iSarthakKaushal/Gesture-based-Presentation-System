@@ -13,11 +13,19 @@ build/
 # Virtual environments
 venv/
 gesture-env/
+**/gesture-env/
 .env
 .venv/
 
+# Duplicate nested project copy (use project root instead)
+hand presentation/
+
 # Generated slide images
 Presentation/
+
+# User presentation files
+*.pptx
+*.ppt
 
 # PyInstaller
 *.spec.bak

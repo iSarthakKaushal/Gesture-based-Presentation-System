@@ -2,46 +2,62 @@ from cvzone.HandTrackingModule import HandDetector
 import cv2
 import os
 import numpy as np
-import comtypes.client
 from tkinter import filedialog, Tk
 from collections import deque
 import shutil
 
-# ---------------------- PPT to Image Conversion ----------------------
-def convert_ppt_to_images(ppt_path, output_folder):
-    ppt_app = comtypes.client.CreateObject("PowerPoint.Application")
-    ppt_app.Visible = True
-
-    presentation = ppt_app.Presentations.Open(ppt_path, WithWindow=False)
-    presentation.SaveAs(output_folder, 17)  # 17 = PNG
-    presentation.Close()
-
-    ppt_app.Quit()
+from slide_utils import convert_ppt_to_images, load_slide_paths, normalize_path
 
 # ---------------------- Select PowerPoint File ----------------------
 root = Tk()
 root.withdraw()
 
 ppt_file = filedialog.askopenfilename(
-    filetypes=[("PowerPoint files", "*.pptx")]
+    title="Select PowerPoint (Cancel = use existing Presentation folder)",
+    filetypes=[
+        ("PowerPoint files", "*.pptx;*.ppt"),
+        ("All files", "*.*"),
+    ],
 )
 
-if not ppt_file:
-    print("No file selected.")
-    exit()
-
-# ---------------------- Convert PPT ----------------------
 folderPath = "Presentation"
 
-# Clear old images
-if os.path.exists(folderPath):
-    shutil.rmtree(folderPath)
+if not ppt_file:
+    pathImages = [os.path.basename(p) for p in load_slide_paths(folderPath)]
+    if pathImages:
+        print(f"Using {len(pathImages)} existing slides in Presentation/")
+    else:
+        print("No file selected and Presentation folder is empty.")
+        exit()
+else:
+    ppt_file = normalize_path(ppt_file)
+    print(f"Opening: {ppt_file}")
 
-os.makedirs(folderPath)
+    if not os.path.isfile(ppt_file):
+        print(f"File does not exist: {ppt_file}")
+        print("If on OneDrive: right-click file -> Always keep on this device")
+        exit(1)
 
-convert_ppt_to_images(ppt_file, os.path.abspath(folderPath))
+    if os.path.exists(folderPath):
+        shutil.rmtree(folderPath)
+    os.makedirs(folderPath)
 
-pathImages = sorted(os.listdir(folderPath), key=len)
+    try:
+        convert_ppt_to_images(ppt_file, folderPath)
+    except Exception as exc:
+        print(f"\nPowerPoint conversion failed: {exc}")
+        print("\nTips:")
+        print("  - Save the file locally (not OneDrive online-only)")
+        print("  - Close PowerPoint if that file is already open")
+        print("  - Put PNG slides in Presentation/ and run again (click Cancel)")
+        exit(1)
+
+    pathImages = [os.path.basename(p) for p in load_slide_paths(folderPath)]
+    if not pathImages:
+        print("No slide images found after conversion.")
+        exit(1)
+
+    print(f"Loaded {len(pathImages)} slides.")
 
 # ---------------------- Webcam Setup ----------------------
 width, height = 1280, 720

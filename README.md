@@ -27,6 +27,8 @@ venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 ```
 
+Use the **`venv`** environment only. An older duplicate `gesture-env` pointed at Python 3.13 and is broken on this machine — it has been removed.
+
 ### Desktop app (fullscreen OpenCV)
 
 ```bash

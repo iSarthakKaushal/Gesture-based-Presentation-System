@@ -1,8 +1,0 @@
-venv\Scripts\activate
-
-pip install opencv-python
-pip install cvzone
-pip install numpy
-pip install comtypes
-
-python gesture_presentation.py
