@@ -5,6 +5,7 @@ comtypes>=1.2.0
 pywin32>=306
 mediapipe>=0.10.9
 streamlit>=1.32.0
+streamlit-autorefresh>=1.0.1
 streamlit-webrtc>=0.47.0
 av>=10.0.0
 Pillow>=10.0.0
