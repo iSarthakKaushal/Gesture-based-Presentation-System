@@ -1,0 +1,9 @@
+opencv-python>=4.8.0
+cvzone>=1.6.0
+numpy>=1.24.0
+comtypes>=1.2.0
+mediapipe>=0.10.9
+streamlit>=1.32.0
+streamlit-webrtc>=0.47.0
+av>=10.0.0
+Pillow>=10.0.0
